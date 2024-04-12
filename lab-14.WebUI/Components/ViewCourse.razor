@@ -1,21 +1,26 @@
-﻿<h3>@Course.Subject @Course.Number (@Course.Title)</h3>
-@foreach(var group in Course.AssignmentGroups)
-{
-    <ViewAssignmentGroup AssignmentGroup="group" />
-}
+﻿<div class="border m-3 p-2">
+    <h3>@Course.Subject @Course.Number (@Course.Title)</h3>
+    @foreach (var group in Course.AssignmentGroups)
+    {
+        <ViewAssignmentGroup AssignmentGroup="group" />
+    }
 
-<button @onclick="() => newCourseVisible = !newCourseVisible">Add New Course</button>
-@if(newCourseVisible)
-{
-    <NewCourse CourseAdded="courseAdded" />
-}
+    @if (newButtonVisible)
+    {
+        <NewAssignmentGroup CourseId="Course.Id" Added="added" />
+    }
+    else
+    {
+        <button @onclick="() => newButtonVisible = !newButtonVisible">Add Assignment Group</button>
+    }
+</div>
 
 @code {
-    bool newCourseVisible = false;
-    [Parameter]
-    public Course Course{ get; set; }
-    void courseAdded()
+    bool newButtonVisible = false;
+    void added()
     {
-        newCourseVisible = false;
+        newButtonVisible = false;
     }
+    [Parameter]
+    public Course Course { get; set; }
 }

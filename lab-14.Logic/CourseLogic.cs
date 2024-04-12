@@ -4,6 +4,10 @@ namespace lab_14.Logic;
 
 public class CourseLogic
 {
+    public static CourseLogic Instance { get; } = new();
+
+    public event Action CourseAdded;
+
     public Course AddCourse(string subject, int number, string title)
     {
         var course = new Course
@@ -13,6 +17,7 @@ public class CourseLogic
             Title = title
         };
         IStorageManager.Instance.AddCourse(course);
+        CourseAdded?.Invoke();
         return course;
     }
     public IEnumerable<Course> GetCourses()
@@ -28,6 +33,7 @@ public class CourseLogic
             Weight = weight
         };
         IStorageManager.Instance.AddAssignmentGroup(group);
+        CourseAdded?.Invoke();
         return group;
     }
     public Assignment AddAssignment(int groupId, string name, int pointsPossible)
@@ -39,6 +45,7 @@ public class CourseLogic
             PointsPossible = pointsPossible
         };
         IStorageManager.Instance.AddAssignment(assignment);
+        CourseAdded?.Invoke();
         return assignment;
     }
     public void SetAssignmentPoints(int assignmentId, int pointsEarned)
@@ -50,5 +57,6 @@ public class CourseLogic
         }
         assignment.PointsEarned = pointsEarned;
         IStorageManager.Instance.UpdateAssignment(assignment);
+        CourseAdded?.Invoke();
     }
 }

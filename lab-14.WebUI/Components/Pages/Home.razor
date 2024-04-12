@@ -1,5 +1,5 @@
 ﻿@page "/"
-@using lab_14.Persistence
+@inject ILogger<Home> logger
 
 <PageTitle>Home</PageTitle>
 
@@ -9,42 +9,49 @@
     <ViewCourse Course="course" />
 }
 
-<button @onclick=addCourse>Add Course</button>
+
+@if (newCourseVisible)
+{
+    <NewCourse CourseAdded="courseAdded" />
+}
+else
+{
+    <button @onclick="() => newCourseVisible = !newCourseVisible">Add New Course</button>
+}
 
 @code {
-    IStorageManager storage = IStorageManager.Instance;
+    bool newCourseVisible = false;
+    void courseAdded()
+    {
+        logger.LogInformation("course added. Hiding new course form.");
+        newCourseVisible = false;
+    }
+
     List<Course> courses = new();
     protected override void OnInitialized()
     {
-        courses = new(storage.GetCourses());
+        logger.LogInformation("Subscribing to the CourseAdded event");
+        CourseLogic.Instance.CourseAdded += () =>
+        {
+            logger.LogInformation("CourseAdded event received");
+            refresh();
+        };
+        refresh();
     }
 
-    void addCourse()
+    void refresh()
     {
-        var c = new Course
-            {
-                Subject = "CS",
-                Number = 1400,
-                Title = "Programming Fundamentals"
-            };
-        storage.AddCourse(c);
+        InvokeAsync(() =>
+        {
+            logger.LogInformation("refreshing course list");
+            courses = new(CourseLogic.Instance.GetCourses());
+            StateHasChanged();
+        });
+    }
 
-        c.AssignmentGroups.Add(new AssignmentGroup
-            {
-                CourseId = c.Id,
-                Name = "Homework",
-                Weight = 20
-            });
-        storage.AddAssignmentGroup(c.AssignmentGroups.FirstOrDefault());
-
-        c.AssignmentGroups.First().Assignments.Add(new Assignment
-            {
-                AssignmentGroupId = c.AssignmentGroups.First().Id,
-                Name = "HW-00",
-                PointsPossible = 5
-            });
-        storage.AddAssignment(c.AssignmentGroups.First().Assignments.First());
-
-        courses = new(storage.GetCourses());
+    public void Dispose()
+    {
+        logger.LogInformation("Unsubscribing from the CourseAdded event");
+        CourseLogic.Instance.CourseAdded -= refresh;
     }
 }

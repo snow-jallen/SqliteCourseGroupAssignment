@@ -18,14 +18,16 @@
 </div>
 
 @code {
-    private CourseLogic logic = new();
-
     public string Subject { get; set; }
     public int Number { get; set; }
     public string Title { get; set; }
 
-    void addCourse()
+    async Task addCourse()
     {
-        logic.AddCourse(Subject, Number, Title);
+        CourseLogic.Instance.AddCourse(Subject, Number, Title);
+        await CourseAdded.InvokeAsync();
     }
+
+    [Parameter]
+    public EventCallback CourseAdded{ get; set; }
 }

@@ -1,5 +1,31 @@
-﻿<h3>NewAssignment</h3>
+﻿<div class="border m-3 p-2">
+    <h3>New Assignment</h3>
+    <form @onsubmit="add">
+        <label>
+            Name:
+            <input @bind="name" type="text" />
+        </label>
+        <label>
+            Points Possible:
+            <input @bind="pointsPossible" type="number" />
+        </label>
+        <button type="submit">Add</button>
+    </form>
+</div>
 
 @code {
+    [Parameter]
+    public EventCallback Added { get; set; }
 
+    [Parameter]
+    public int AssignmentGroupId { get; set; }
+
+    string name;
+    int pointsPossible;
+
+    async Task add()
+    {
+        CourseLogic.Instance.AddAssignment(AssignmentGroupId, name, pointsPossible);
+        await Added.InvokeAsync();
+    }
 }
