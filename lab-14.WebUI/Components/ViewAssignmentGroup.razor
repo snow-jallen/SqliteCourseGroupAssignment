@@ -1,0 +1,10 @@
+﻿<h3>@AssignmentGroup.Name</h3>
+@foreach(var assignment in AssignmentGroup.Assignments)
+{
+    <ViewAssignment Assignment="assignment" />
+}
+
+@code {
+    [Parameter]
+    public AssignmentGroup AssignmentGroup{ get; set; }
+}

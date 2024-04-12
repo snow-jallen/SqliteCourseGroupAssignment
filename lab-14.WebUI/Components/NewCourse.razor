@@ -1,0 +1,31 @@
+﻿<div class="border m-3 p-2">
+    <h3>New Course</h3>
+    <form @onsubmit="addCourse">
+        <label>
+            Subject:
+            <input @bind="Subject" type="text" />
+        </label>
+        <label>
+            Number:
+            <input @bind="Number" type="number" />
+        </label>
+        <label>
+            Title:
+            <input @bind="Title" type="text" />
+        </label>
+        <button type="submit">Add Course</button>
+    </form>
+</div>
+
+@code {
+    private CourseLogic logic = new();
+
+    public string Subject { get; set; }
+    public int Number { get; set; }
+    public string Title { get; set; }
+
+    void addCourse()
+    {
+        logic.AddCourse(Subject, Number, Title);
+    }
+}

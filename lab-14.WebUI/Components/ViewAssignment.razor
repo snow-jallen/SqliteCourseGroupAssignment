@@ -1,0 +1,19 @@
+﻿<div class="border m-3 p-2">
+    <h3>@Assignment.Name</h3>
+    <p>Points Possible: @Assignment.PointsPossible</p>
+    <label>
+        Points Earned:
+        <input @bind="Assignment.PointsEarned" type="number" />
+    </label>
+    <button @onclick="updatePointsEarned">Update Points Earned</button>
+</div>
+@code {
+    [Parameter]
+    public Assignment Assignment { get; set; }
+    private CourseLogic logic = new();
+
+    void updatePointsEarned()
+    {
+        logic.SetAssignmentPoints(Assignment.Id, Assignment.PointsEarned);
+    }
+}

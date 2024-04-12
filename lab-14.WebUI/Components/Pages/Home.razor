@@ -1,0 +1,50 @@
+﻿@page "/"
+@using lab_14.Persistence
+
+<PageTitle>Home</PageTitle>
+
+<h1>Found @courses.Count courses</h1>
+@foreach(var course in courses)
+{
+    <ViewCourse Course="course" />
+}
+
+<button @onclick=addCourse>Add Course</button>
+
+@code {
+    IStorageManager storage = IStorageManager.Instance;
+    List<Course> courses = new();
+    protected override void OnInitialized()
+    {
+        courses = new(storage.GetCourses());
+    }
+
+    void addCourse()
+    {
+        var c = new Course
+            {
+                Subject = "CS",
+                Number = 1400,
+                Title = "Programming Fundamentals"
+            };
+        storage.AddCourse(c);
+
+        c.AssignmentGroups.Add(new AssignmentGroup
+            {
+                CourseId = c.Id,
+                Name = "Homework",
+                Weight = 20
+            });
+        storage.AddAssignmentGroup(c.AssignmentGroups.FirstOrDefault());
+
+        c.AssignmentGroups.First().Assignments.Add(new Assignment
+            {
+                AssignmentGroupId = c.AssignmentGroups.First().Id,
+                Name = "HW-00",
+                PointsPossible = 5
+            });
+        storage.AddAssignment(c.AssignmentGroups.First().Assignments.First());
+
+        courses = new(storage.GetCourses());
+    }
+}
